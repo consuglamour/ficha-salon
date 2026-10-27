@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha de ingreso al salón</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Concepto: la ficha de ingreso que se llena en el mesón de un salón de baño canino,
+   sobre la pared de azulejos. El recorrido del perro (recepción → salida) es el índice. */
+:root{
+  --azulejo:#DCEDEA; --junta:#C3DCD8; --ficha:#FFFFFF; --tinta:#123A40; --tinta-suave:#4D6B6F;
+  --lazo:#D63F7A; --lazo-suave:#FBE3EC; --agua:#2C8C93; --linea:#CFE0DD;
+  --display:'Bricolage Grotesque', 'Trebuchet MS', system-ui, sans-serif;
+  --cuerpo:'Atkinson Hyperlegible', Verdana, system-ui, sans-serif;
+  --ficha-mono:'IBM Plex Mono', 'Courier New', monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --azulejo:#0F2427; --junta:#17343A; --ficha:#152E33; --tinta:#E2F1EE; --tinta-suave:#A3C2C0;
+  --lazo:#FF7BAA; --lazo-suave:#3A2030; --agua:#6CCBD1; --linea:#27474D; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --azulejo:#0F2427; --junta:#17343A; --ficha:#152E33; --tinta:#E2F1EE; --tinta-suave:#A3C2C0;
+  --lazo:#FF7BAA; --lazo-suave:#3A2030; --agua:#6CCBD1; --linea:#27474D; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--azulejo);color:var(--tinta);font-family:var(--cuerpo);font-size:17px;line-height:1.55;
+  background-image:linear-gradient(var(--junta) 2px,transparent 2px),linear-gradient(90deg,var(--junta) 2px,transparent 2px);
+  background-size:56px 56px;min-height:100vh;
+  padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.marco{max-width:760px;margin:0 auto}
+.ficha{background:var(--ficha);border-radius:4px;position:relative;padding:40px clamp(20px,6vw,60px) 36px;
+  box-shadow:0 20px 40px -28px rgba(18,58,64,.55)}
+/* el troquel del talón de ingreso */
+.ficha::before{content:"";position:absolute;left:0;right:0;top:-9px;height:18px;
+  background:radial-gradient(circle at 9px 9px,var(--azulejo) 6px,transparent 6.5px) 0 0/22px 18px repeat-x}
+.cabecera{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--ficha-mono);font-size:13px;
+  letter-spacing:.06em;color:var(--tinta-suave);border-bottom:2px dashed var(--linea);padding-bottom:14px}
+.cabecera b{color:var(--lazo);font-weight:600}
+h1,h2{font-family:var(--display);font-weight:800;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,7vw,52px);line-height:1.02;margin:26px 0 12px;letter-spacing:-.01em}
+h2{font-size:clamp(28px,5.5vw,38px);line-height:1.05;margin:4px 0 6px}
+.estacion{font-family:var(--ficha-mono);font-size:13px;letter-spacing:.14em;color:var(--agua);margin:0;text-transform:uppercase}
+.bajada{color:var(--tinta-suave);margin:0 0 26px;max-width:58ch}
+.intro p{margin:0 0 14px;max-width:62ch}
+label.campo{display:block;font-family:var(--ficha-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta-suave);margin:22px 0 6px}
+input[type=text],textarea{width:100%;font:inherit;padding:12px 14px;border:1px solid var(--linea);border-bottom:2px solid var(--tinta);
+  background:var(--ficha);color:var(--tinta);border-radius:0}
+textarea{min-height:100px;resize:vertical}
+input:focus,textarea:focus{outline:3px solid var(--lazo-suave);outline-offset:1px;border-bottom-color:var(--lazo)}
+/* el recorrido del perro: 8 estaciones */
+.recorrido{list-style:none;margin:6px 0 30px;padding:0;display:grid;grid-template-columns:repeat(8,1fr);position:relative}
+.recorrido::before{content:"";position:absolute;left:6%;right:6%;top:15px;height:3px;background:var(--linea)}
+.recorrido li{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--ficha-mono);
+  font-size:11px;color:var(--tinta-suave);text-align:center;min-width:0}
+.recorrido .punto{width:32px;height:32px;border-radius:50%;background:var(--ficha);border:2px solid var(--linea);display:grid;place-items:center;position:relative;z-index:1}
+.recorrido li.hecha .punto{border-color:var(--agua);background:var(--agua)}
+.recorrido li.hecha .punto svg{fill:var(--ficha)}
+.recorrido li.aqui .punto{border-color:var(--lazo);background:var(--lazo);transform:scale(1.12)}
+.recorrido li.aqui .punto svg{fill:var(--ficha)}
+.recorrido li.aqui{color:var(--tinta);font-weight:600}
+.recorrido .punto svg{width:16px;height:16px;fill:var(--linea)}
+.recorrido .nom{overflow-wrap:anywhere;line-height:1.2}
+@media (max-width:560px){ .recorrido .nom{display:none} .recorrido li.aqui .nom{display:block;position:absolute;top:38px;white-space:nowrap} .recorrido{margin-bottom:40px} }
+.contador{font-family:var(--ficha-mono);font-size:12px;color:var(--tinta-suave);display:flex;justify-content:space-between;margin:-18px 0 22px}
+.pregunta{padding:26px 0;border-top:1px solid var(--linea)}
+.pregunta:first-of-type{border-top:0}
+.q-num{font-family:var(--ficha-mono);font-size:12px;color:var(--lazo);letter-spacing:.1em}
+.q-texto{font-family:var(--display);font-weight:500;font-size:22px;line-height:1.25;margin:4px 0 4px;text-wrap:balance}
+.q-ayuda{font-family:var(--ficha-mono);font-size:12.5px;color:var(--tinta-suave);margin:0 0 12px}
+.opciones{display:grid;gap:9px}
+.op{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:var(--ficha);
+  border:1px solid var(--linea);border-radius:10px;padding:12px 16px;cursor:pointer;transition:transform .12s ease,border-color .12s ease,background .12s ease}
+.op:hover{border-color:var(--agua);transform:translateY(-1px)}
+.op:focus-visible{outline:3px solid var(--lazo);outline-offset:2px}
+.op .letra{flex:none;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--agua);color:var(--agua);display:grid;place-items:center;
+  font-family:var(--ficha-mono);font-size:13px;font-weight:600;margin-top:1px;transition:all .15s ease}
+.op[aria-pressed=true]{border-color:var(--lazo);background:var(--lazo-suave)}
+.op[aria-pressed=true] .letra{background:var(--lazo);border-color:var(--lazo);color:var(--ficha);transform:rotate(-10deg) scale(1.08)}
+.op[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.op .txt{flex:1;min-width:0}
+.op .mensaje{display:block;margin-top:8px;padding:10px 12px;border-radius:12px 12px 12px 3px;background:var(--azulejo);font-size:15.5px}
+.otra-campo{margin-top:8px}
+.balanza{display:grid;gap:12px}
+.fila{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;font-size:15.5px}
+.fila .izq{text-align:right}
+.ptos{display:flex;gap:8px}
+.pto{width:28px;height:28px;border-radius:50%;border:2px solid var(--agua);background:var(--ficha);cursor:pointer;padding:0}
+.pto:nth-child(3){border-style:dashed}
+.pto[aria-pressed=true]{background:var(--lazo);border-color:var(--lazo);border-style:solid}
+.pto:focus-visible{outline:3px solid var(--lazo);outline-offset:2px}
+@media (max-width:480px){ .fila{grid-template-columns:1fr 1fr;row-gap:6px} .fila .izq{text-align:left} .fila .der{text-align:right} .ptos{grid-column:1 / -1;grid-row:2;justify-content:space-between} }
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:30px;flex-wrap:wrap}
+.btn{font-family:var(--display);font-weight:800;font-size:17px;padding:13px 26px;border:2px solid var(--tinta);background:var(--tinta);color:var(--ficha);
+  border-radius:999px;cursor:pointer;min-height:48px}
+.btn:hover{background:var(--agua);border-color:var(--agua)}
+.btn:focus-visible{outline:3px solid var(--lazo);outline-offset:2px}
+.btn.sec{background:transparent;color:var(--tinta)}
+.btn.sec:hover{background:var(--azulejo)}
+.btn:disabled{opacity:.6;cursor:wait}
+.aviso{font-family:var(--ficha-mono);font-size:13px;color:var(--lazo);min-height:18px;margin:14px 0 0}
+.final{text-align:center;padding:12px 0 4px}
+.timbre{display:inline-flex;align-items:center;gap:12px;margin:16px auto 22px;border:4px double var(--lazo);color:var(--lazo);border-radius:8px;
+  font-family:var(--display);font-weight:800;font-size:clamp(24px,6vw,36px);letter-spacing:.06em;padding:10px 22px;transform:rotate(-7deg);
+  animation:timbre .5s cubic-bezier(.2,1.6,.4,1) both}
+.timbre svg{width:38px;height:38px;fill:var(--lazo)}
+@keyframes timbre{0%{transform:rotate(-7deg) scale(2.2);opacity:0}100%{transform:rotate(-7deg) scale(1);opacity:1}}
+.copia{text-align:left;margin-top:22px}
+.copia textarea{min-height:180px;font-family:var(--ficha-mono);font-size:13px}
+.pie{font-family:var(--ficha-mono);font-size:12px;color:var(--tinta-suave);text-align:center;margin-top:18px}
+@media (prefers-reduced-motion:reduce){ .timbre{animation:none} .op,.op .letra{transition:none} }
+</style>
+</head>
+<body>
+
+
+<div class="marco">
+  <main class="ficha" id="ficha">
+    <div class="cabecera"><span>FICHA DE INGRESO N.º <b>001</b></span><span id="fecha">BAÑO · CORTE · MARCA</span></div>
+    <section id="pantalla"></section>
+  </main>
+  <p class="pie">Ficha de marca del salón · 2026</p>
+</div>
+
+<script>
+var HUELLA = '<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="16" rx="5.2" ry="4.3"/><ellipse cx="5.2" cy="10.4" rx="2.2" ry="2.8"/><ellipse cx="9.4" cy="6.2" rx="2.2" ry="2.9"/><ellipse cx="14.6" cy="6.2" rx="2.2" ry="2.9"/><ellipse cx="18.8" cy="10.4" rx="2.2" ry="2.8"/></svg>';
+
+var ESTACIONES = [
+  {nom:'Recepción', titulo:'El salón', bajada:'Lo que el salón es hoy, antes de cualquier nombre o logo.', preguntas:[
+    {id:'servicios', t:'¿Qué servicios hace hoy el salón?', tipo:'varios', ayuda:'Marca todos los que correspondan.', ops:['Baño y secado','Corte de raza','Corte a tijera','Corte higiénico','Deslanado','Corte de uñas','Limpieza de oídos','Hidratación y tratamientos del pelo','Retiro y entrega a domicilio','Atención de gatos'], otra:true},
+    {id:'formato', t:'¿Dónde se baña a los perros?', tipo:'uno', ops:['En un local a la calle','En una van que llega a la casa del cliente','En mi casa, adaptada para atender','Dentro de una veterinaria o una tienda de mascotas','Todavía está por definirse'], otra:true},
+    {id:'origen', t:'¿Qué te llevó a abrir el salón?', tipo:'uno', ops:['Los perros son lo mío desde siempre y quise hacer de eso mi oficio','A mi perro lo trataron mal en otra peluquería y supe que se podía hacer distinto','En el barrio faltaba dónde llevarlos','Vengo del mundo veterinario y vi lo que faltaba','Quería un trabajo propio y esto es lo que sé hacer bien'], otra:true},
+    {id:'dia', t:'Cuenta el día en que decidiste abrirlo, como se lo contarías a una amiga.', tipo:'texto'}
+  ]},
+  {nom:'Sala de espera', titulo:'Quién llega', bajada:'La persona que cruza la puerta con su perro en brazos.', preguntas:[
+    {id:'humano', t:'¿Quién es la persona que más trae perros al salón?', tipo:'varios', max:2, ops:['Una familia con niños','Alguien que vive con su perro y nadie más','Una pareja joven sin hijos, para la que el perro es el hijo','Una persona mayor','Alguien que trabaja todo el día y no alcanza a bañarlo','Criadores o gente que lleva perros a exposiciones'], otra:true},
+    {id:'vinculo', t:'Para esa persona, su perro es…', tipo:'uno', ops:['Su hijo','Un integrante más de la familia','Su compañero de aventuras','Su regalón','El perro de la casa'], otra:true},
+    {id:'llegada', t:'¿Qué frase dice esa persona al dejar a su perro?', tipo:'uno', ops:['«Que no me lo traten mal, por favor»','«Déjamelo precioso, que tenemos cumpleaños»','«Está hecho una lana, haz lo que puedas»','«Ojo, que es nervioso y muerde cuando se asusta»','«¿A qué hora lo vengo a buscar?»'], otra:true},
+    {id:'miedo', t:'¿Qué le quita el sueño a esa persona cuando deja a su perro en una peluquería?', tipo:'varios', max:2, ops:['Que lo corten o lo lastimen','Que lo dejen horas en una jaula','Que lo amarren o lo seden','Que vuelva asustado','Que le hagan otro corte del que pidió','Que le cobren distinto de lo que le dijeron','Que se contagie de algo']},
+    {id:'cuando', t:'¿Cuándo llega un perro al salón?', tipo:'varios', ayuda:'Marca todos los que correspondan.', ops:['A su baño de cada mes','Antes de un cumpleaños, un matrimonio o una fiesta','Al llegar el verano, para pelarlo','Cuando el pelo ya se volvió un problema','Porque lo mandó el veterinario','De regalo, de parte de alguien que lo quiere']},
+    {id:'recomienda', t:'¿Quién le recomienda el salón a la gente?', tipo:'varios', max:2, ops:['El veterinario del barrio','Otros clientes','El paseador de perros','La tienda de mascotas','El grupo de WhatsApp del barrio o del edificio','Instagram o Google'], otra:true},
+    {id:'perros', t:'¿Qué perros atiende el salón?', tipo:'varios', ayuda:'Marca todos los que correspondan.', ops:['Chicos, hasta 10 kilos','Medianos, de 10 a 25 kilos','Grandes, de más de 25 kilos','De pelo largo que se enreda','De pelo corto','Perros mayores o con problemas de salud','Perros nerviosos o difíciles de manejar','Gatos']},
+    {id:'barrio', t:'¿En qué comuna o barrio está el salón, y de dónde viene su gente?', tipo:'texto'},
+    {id:'precio', t:'¿Cuánto cuesta hoy un baño con corte para un perro mediano?', tipo:'uno', ops:['Menos de $15.000','$15.000 a $25.000','$25.000 a $35.000','Más de $35.000','Todavía está por definirse']}
+  ]},
+  {nom:'Cepillado', titulo:'Lo que se enreda', bajada:'Lo que hoy anda mal en el rubro y el salón viene a desenredar.', preguntas:[
+    {id:'roto', t:'Si tuvieras que nombrar lo que anda mal en las peluquerías caninas, ¿qué sería?', tipo:'varios', max:2, ops:['Atienden en cadena, para sacar más perros por día','Tratan al perro como un auto que se lava','El dueño nunca sabe qué pasó adentro','Los horarios son imposibles para quien trabaja','El precio cambia al momento de pagar','Falta higiene','Nadie le enseña al dueño a cuidarlo en la casa'], otra:true},
+    {id:'caso', t:'Cuenta un caso real, tuyo o de un cliente, en que una peluquería lo hizo mal.', tipo:'texto'},
+    {id:'alternativa', t:'Cuando no vienen al salón, ¿qué hacen tus clientes?', tipo:'varios', ayuda:'Marca todos los que correspondan.', ops:['Lo bañan en la casa','Lo llevan a la veterinaria del barrio','Van a la peluquería de una tienda grande de mascotas','Llaman a alguien que va a domicilio','Lo dejan pasar hasta que el pelo se vuelve un problema']},
+    {id:'competencia', t:'Nombra 2 o 3 peluquerías que tu gente conoce, y lo que tiene cada una.', tipo:'texto'}
+  ]},
+  {nom:'Baño', titulo:'Lo que el salón promete', bajada:'Lo que cambia en la casa cuando el perro vuelve.', preguntas:[
+    {id:'vuelta', t:'Cuando el perro vuelve a la casa, ¿qué te gustaría que dijera su dueño?', tipo:'uno', ops:['«Se nota que lo quieren»','«Volvió feliz, ni un poco asustado»','«Quedó como de revista»','«Me fueron mandando fotos y supe todo»','«Fue facilísimo: lo pasaron a buscar y me lo trajeron»'], otra:true},
+    {id:'distinto', t:'¿Qué hace tu salón que los otros no hacen?', tipo:'texto'},
+    {id:'seccion', t:'Si el salón saliera en una guía de la ciudad, ¿en qué sección te gustaría que apareciera?', tipo:'uno', ops:['Peluquerías caninas','Spa y bienestar','Salud de la mascota','Servicios para la familia','Belleza y estética','Oficios del barrio'], otra:true},
+    {id:'prueba', t:'¿Qué puede comprobar un cliente con sus propios ojos?', tipo:'varios', max:3, ops:['Que el baño se ve desde afuera, por una ventana o una cámara','Que el perro espera suelto, fuera de la jaula','Que recibe fotos durante el baño','Que el precio está publicado','Que los productos tienen su nombre a la vista','Que cada perro tiene su ficha, con su historia','Que se respeta el ritmo del perro, aunque demore más']}
+  ]},
+  {nom:'Secado', titulo:'El carácter', bajada:'Quién es el salón cuando nadie lo está mirando.', preguntas:[
+    {id:'perro', t:'Si el salón fuera un perro, ¿cuál sería?', tipo:'uno', ops:[
+      {h:'Golden retriever', e:'Cariñoso con todos, de confianza a la primera.'},
+      {h:'Border collie', e:'Ordenado, obsesionado con el trabajo bien hecho.'},
+      {h:'Quiltro de la plaza', e:'De barrio: conoce a todos y todos lo conocen.'},
+      {h:'Poodle', e:'Elegante, con el pelo siempre perfecto.'},
+      {h:'Bulldog francés', e:'Gracioso, se toma la vida con calma.'},
+      {h:'Pastor alemán', e:'Protector: nada se le escapa.'},
+      {h:'Salchicha', e:'Chico, con un carácter más grande que él.'}
+    ], otra:true},
+    {id:'vecina', t:'Y si fuera una persona del barrio, ¿quién sería?', tipo:'uno', ops:['La vecina que te cuida al perro como si fuera suyo','La artista que hace de cada corte una obra','La amiga que te hace reír mientras esperas','La que sabe de todo y te explica el porqué','La que llegó a hacer las cosas distinto, aunque moleste','La que convierte un perro hecho lana en otro perro','La de confianza de toda la vida'], otra:true},
+    {id:'balanza', t:'¿Hacia qué lado se inclina el salón?', tipo:'escala', ayuda:'Marca 1 punto en cada línea: el del medio es «ni tanto ni tan poco».', pares:[['De barrio','De boutique'],['Juguetón','Sereno'],['Cariñoso','Experto'],['Rápido','Sin apuro'],['Sencillo','Sofisticado']]},
+    {id:'valores', t:'¿Qué palabras describen al salón?', tipo:'varios', max:3, ops:['Paciencia','Cariño','Prolijidad','Honestidad','Alegría','Calma','Higiene','Puntualidad','Respeto por el ritmo del perro','Valentía']},
+    {id:'asado', t:'Si el salón fuera una persona en un asado, ¿qué estaría haciendo?', tipo:'uno', ops:['Jugando con el perro del dueño de casa','A cargo de la parrilla, para que todo salga perfecto','Contando la historia que todos van a repetir','Ayudando en la cocina sin que nadie se lo pida','Escuchando a todos y soltando un consejo al final','Animando la fiesta']},
+    {id:'dolor', t:'¿Qué le dolería más al salón que dijeran de él?', tipo:'uno', ops:['Que es caro','Que es frío','Que improvisa','Que es cursi','Que es lento','Que trata mal a los perros']},
+    {id:'sentir', t:'¿Qué siente el dueño cuando sale del salón?', tipo:'varios', max:2, ops:['Tranquilidad','Alegría','Orgullo de su perro','Alivio','Confianza','Ternura','Ganas de volver']},
+    {id:'lugar', t:'Si el salón fuera un lugar, ¿cuál sería?', tipo:'uno', ops:['Una casa de campo con patio','El spa de un hotel','Un taller de barrio','Una plaza un domingo','Una consulta médica','Una tienda de diseño','La cocina de una abuela'], otra:true}
+  ]},
+  {nom:'Corte', titulo:'Cómo habla', bajada:'Las palabras con que el salón le escribe a su gente.', preguntas:[
+    {id:'boca', t:'Cuando el salón escribe, ¿quién está hablando?', tipo:'uno', ops:['La peluquera que trata a cada perro por su nombre','La veterinaria que explica con calma','La amiga que siempre tiene una talla','La tía regalona que lo llena de cariño','La dueña que va directo al punto'], otra:true},
+    {id:'aquien', t:'¿A quién le habla el salón?', tipo:'uno', ops:['Al dueño','Al perro, como si leyera: «¡Hola, Toby!»','A los 2, según el momento']},
+    {id:'trato', t:'¿Cómo trata el salón a la gente?', tipo:'uno', ops:['De tú','De usted','Según la persona']},
+    {id:'mensaje', t:'Toby llegó con nudos detrás de las orejas. ¿Qué mensaje le mandarías a su dueña?', tipo:'uno', ops:[
+      {h:'Con calma', e:'Hola, Carla. Toby llegó con unos nudos detrás de las orejas; se los sacamos de a poco, con pausas, y lo pasó bien. Te mando la foto de cómo quedó.'},
+      {h:'Con humor', e:'Carla, Toby traía unos nudos de campeonato. Les ganamos por paciencia. Mira esta foto.'},
+      {h:'Explicando', e:'Hola, Carla. Toby tenía nudos detrás de las orejas: se forman cuando el cepillo pasa sólo por encima. Te dejo un truco de 2 minutos para la casa.'},
+      {h:'Al grano', e:'Toby listo: nudos fuera, corte, uñas y oídos. Lo puedes retirar a las 17:00.'},
+      {h:'Con cariño', e:'¡Carla! Toby se portó como un rey. Tenía unos nuditos, pero ya está regio y perfumado. Te lo devolvemos con abrazo incluido.'}
+    ]},
+    {id:'atraso', t:'Hoy el salón va 40 minutos atrasado y la dueña de Luna está esperando. ¿Qué le escribes?', tipo:'uno', ops:[
+      {h:'Con calma', e:'Hola, Paula. Luna está terminando de secarse y queremos que salga sin apuro: nos falta media hora más. Te aviso apenas esté lista.'},
+      {h:'Con humor', e:'Paula, Luna se tomó el secado como sesión de spa y no quiere irse. Te la entregamos en 40 minutos, más linda que nunca.'},
+      {h:'Al grano', e:'Paula, vamos con 40 minutos de atraso. Luna estará lista a las 18:10. Disculpa la espera.'},
+      {h:'Con cariño', e:'¡Paula! Perdón por la espera: Luna está regia y feliz, y en 40 minutos ya está contigo. Te mandamos un adelanto en foto.'}
+    ]},
+    {id:'humor', t:'¿Cuánto humor cabe en lo que escribe el salón?', tipo:'uno', ops:['Harto: es parte de la gracia','A ratos, cuando el momento lo pide','Poco: el cuidado del perro se toma en serio']},
+    {id:'decirperro', t:'¿Cómo le dice el salón al perro?', tipo:'varios', max:2, ops:['Perro','Perrito','Peludo','Lomito','Mascota','Hijo perruno','Siempre por su nombre']},
+    {id:'decirdueno', t:'¿Y a la persona?', tipo:'uno', ops:['Cliente','Dueño o dueña','Tutor o tutora','La familia de Toby','Siempre por su nombre']},
+    {id:'siempre', t:'Palabras que el salón usaría siempre.', tipo:'texto'},
+    {id:'jamas', t:'Palabras que el salón dejaría fuera para siempre.', tipo:'texto'}
+  ]},
+  {nom:'Perfume', titulo:'Lo que el salón cree', bajada:'La convicción que queda en el aire cuando el perro ya se fue.', preguntas:[
+    {id:'pared', t:'¿Cuál de estas frases podría estar escrita en la pared del salón?', tipo:'uno', ops:['«Un perro tranquilo queda más lindo que un perro apurado»','«Cada perro tiene su ritmo»','«Bañar a un perro es cuidar a una familia»','«Lo más lindo de un corte es que vuelva feliz»','«El dueño tiene derecho a ver qué pasa adentro»'], otra:true},
+    {id:'contra', t:'¿Contra qué costumbre del rubro se para el salón?', tipo:'uno', ops:['El baño en cadena, contra el reloj','La jaula como sala de espera','El perro tratado como un accesorio de moda','La puerta cerrada, que deja al dueño afuera','El precio que cambia al pagar'], otra:true},
+    {id:'nunca', t:'Una cosa que el salón nunca haría, aunque le pagaran el doble.', tipo:'texto'},
+    {id:'objeto', t:'Si un objeto del salón tuviera que contar quién es, ¿cuál sería?', tipo:'uno', ops:['La toalla tibia, recién doblada','El cepillo','La burbuja de jabón','La huella mojada en el piso','El moño o el pañuelo de la salida','La tijera','La ficha con el nombre de cada perro'], otra:true},
+    {id:'futuro', t:'En 5 años, ¿cómo te imaginas el salón?', tipo:'uno', ops:['El mismo salón, lleno y con lista de espera','2 o 3 locales en distintos barrios','Una flota de vans','Una escuela que forma peluqueros caninos','Una línea de productos con su propia marca'], otra:true}
+  ]},
+  {nom:'Salida', titulo:'Últimas palabras', bajada:'Con tus palabras, antes de entregar al perro.', preguntas:[
+    {id:'gustan', t:'2 o 3 marcas, de cualquier rubro, que te gustan por cómo tratan a su gente.', tipo:'texto'},
+    {id:'lejos', t:'Y 2 o 3 de las que el salón se tiene que alejar, aunque te gusten.', tipo:'texto'},
+    {id:'sinleer', t:'Alguien pasa frente al salón y ve el letrero sin alcanzar a leerlo. ¿Qué tendría que sentir?', tipo:'varios', max:2, ops:['Que ahí se cuida bien a los perros','Que es un lugar alegre','Que es limpio y ordenado','Que es de barrio, de confianza','Que es especial, distinto a los demás','Que es tranquilo']},
+    {id:'canales', t:'¿Dónde va a vivir primero la marca?', tipo:'varios', ayuda:'Marca todos los que correspondan.', ops:['Instagram','TikTok','WhatsApp','La ficha de Google Maps','El letrero y la vitrina del salón','La van','Volantes en el barrio','El boca a boca']},
+    {id:'decidido', t:'¿Hay algo ya decidido que no se toca? Un nombre, un color, una promesa a alguien.', tipo:'texto'},
+    {id:'cafe', t:'¿Con qué persona, programa o marca chilena se iría el salón a tomar un café?', tipo:'texto'},
+    {id:'libre', t:'Lo que no te preguntamos y quieres contar.', tipo:'texto'}
+  ]}
+];
+
+var TOTAL = ESTACIONES.reduce(function(n,c){return n+c.preguntas.length},0);
+var LETRAS = 'abcdefghijklmnopqrstuvwxyz';
+var CLAVE = 'ficha-ingreso-salon';
+var estado = {nombre:'', salon:'', resp:{}, otra:{}};
+var paso = -1;
+try{ var g = JSON.parse(localStorage.getItem(CLAVE)||'null'); if(g && g.resp){ estado = g; } }catch(e){}
+function guardarLocal(){ try{ localStorage.setItem(CLAVE, JSON.stringify(estado)); }catch(e){} }
+
+var pantalla = document.getElementById('pantalla');
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]}); }
+function numeroDe(id){ var n=0,r=0; ESTACIONES.forEach(function(c){c.preguntas.forEach(function(p){n++; if(p.id===id) r=n;})}); return r; }
+function lleno(v){ return (Array.isArray(v)&&v.some(function(x){return x!==null&&x!==undefined}))||(typeof v==='string'&&v.trim()!==''); }
+function respondidas(){ var n=0; ESTACIONES.forEach(function(c){c.preguntas.forEach(function(p){ if(lleno(estado.resp[p.id])) n++; })}); return n; }
+
+function recorrido(k){
+  return '<ol class="recorrido" aria-label="Recorrido del baño">'+ESTACIONES.map(function(c,i){
+    var cl = i<k ? 'hecha' : (i===k ? 'aqui' : '');
+    return '<li class="'+cl+'"'+(i===k?' aria-current="step"':'')+'><span class="punto">'+HUELLA+'</span><span class="nom">'+c.nom+'</span></li>';
+  }).join('')+'</ol>';
+}
+
+function portada(){
+  pantalla.innerHTML =
+    '<h1>Ficha de ingreso al salón</h1>'+
+    '<div class="intro">'+
+    '<p class="bajada">Antes del logo y los colores, el salón necesita saber quién es. Con esta ficha se escribe su marca: a quién atiende, qué promete, cómo habla y en qué cree.</p>'+
+    '<p>Son '+TOTAL+' preguntas repartidas en las '+ESTACIONES.length+' estaciones de un baño, de la recepción a la salida. Toma unos 30 minutos y se guarda sola en este navegador, así que puedes dejarla y volver.</p>'+
+    '<p>Cada alternativa es un camino posible para la marca: marca la que se parece más a tu salón, y si ninguna calza, escribe la tuya en «Otra».</p>'+
+    '</div>'+
+    '<label class="campo" for="nombre">Tu nombre</label>'+
+    '<input type="text" id="nombre" autocomplete="name" value="'+esc(estado.nombre)+'">'+
+    '<label class="campo" for="salon">Nombre del salón</label>'+
+    '<input type="text" id="salon" placeholder="Si todavía no tiene, escribe los que estás barajando" value="'+esc(estado.salon)+'">'+
+    '<p class="aviso" id="aviso"></p>'+
+    '<div class="nav"><span></span><button class="btn" id="empezar" type="button">'+(respondidas()?'Seguir donde quedé':'Hacer el ingreso')+'</button></div>';
+  document.getElementById('empezar').onclick=function(){
+    var v=document.getElementById('nombre').value.trim();
+    if(!v){ document.getElementById('aviso').textContent='Escribe tu nombre para saber quién llenó la ficha.'; document.getElementById('nombre').focus(); return; }
+    estado.nombre=v; estado.salon=document.getElementById('salon').value.trim(); guardarLocal(); ir(0);
+  };
+}
+
+function opcionHTML(p,op,i){
+  var val = typeof op==='string' ? op : op.h;
+  var sel = estado.resp[p.id]; var on = Array.isArray(sel) ? sel.indexOf(val)>-1 : sel===val;
+  var chat = p.id==='mensaje'||p.id==='atraso';
+  var cuerpo = typeof op==='string' ? esc(op) : '<b>'+esc(op.h)+'</b><span class="'+(chat?'mensaje':'')+'">'+(chat?'':' · ')+esc(op.e)+'</span>';
+  return '<button type="button" class="op" aria-pressed="'+on+'" data-q="'+p.id+'" data-v="'+esc(val)+'"><span class="letra">'+LETRAS[i]+'</span><span class="txt">'+cuerpo+'</span></button>';
+}
+
+function estacion(k){
+  var c=ESTACIONES[k];
+  var h=recorrido(k)+'<div class="contador"><span>Estación '+(k+1)+' de '+ESTACIONES.length+'</span><span id="cuenta">'+respondidas()+' de '+TOTAL+' respondidas</span></div>';
+  h+='<p class="estacion">'+c.nom+'</p><h2>'+c.titulo+'</h2><p class="bajada">'+c.bajada+'</p>';
+  c.preguntas.forEach(function(p){
+    h+='<div class="pregunta" id="q-'+p.id+'"><div class="q-num">PREGUNTA '+numeroDe(p.id)+'</div><p class="q-texto">'+esc(p.t)+'</p>';
+    var ayuda = p.ayuda || (p.tipo==='varios'&&p.max ? 'Elige hasta '+p.max+'.' : (p.tipo==='uno' ? 'Elige 1.' : ''));
+    if(ayuda) h+='<p class="q-ayuda">'+ayuda+'</p>';
+    if(p.tipo==='escala'){
+      var v=estado.resp[p.id]||[];
+      h+='<div class="balanza">'+p.pares.map(function(par,j){
+        var pts=''; for(var n=1;n<=5;n++){ pts+='<button type="button" class="pto" aria-pressed="'+(v[j]===n)+'" aria-label="'+esc(par[0])+' o '+esc(par[1])+': '+n+' de 5" data-e="'+p.id+'" data-j="'+j+'" data-n="'+n+'"></button>'; }
+        return '<div class="fila"><span class="izq">'+esc(par[0])+'</span><span class="ptos">'+pts+'</span><span class="der">'+esc(par[1])+'</span></div>';
+      }).join('')+'</div>';
+    } else if(p.tipo==='texto'){
+      h+='<textarea id="t-'+p.id+'" data-q="'+p.id+'" aria-label="'+esc(p.t)+'">'+esc(estado.resp[p.id]||'')+'</textarea>';
+    } else {
+      h+='<div class="opciones">'; p.ops.forEach(function(op,i){ h+=opcionHTML(p,op,i); });
+      if(p.otra) h+=opcionHTML(p,'Otra',p.ops.length);
+      h+='</div>';
+      if(p.otra){
+        var s=estado.resp[p.id]; var vis = Array.isArray(s) ? s.indexOf('Otra')>-1 : s==='Otra';
+        h+='<div class="otra-campo"'+(vis?'':' hidden')+' id="o-'+p.id+'"><label class="campo" for="ot-'+p.id+'">¿Cuál?</label><input type="text" id="ot-'+p.id+'" data-otra="'+p.id+'" value="'+esc(estado.otra[p.id]||'')+'"></div>';
+      }
+    }
+    h+='</div>';
+  });
+  var ultimo = k===ESTACIONES.length-1;
+  h+='<p class="aviso" id="aviso"></p><div class="nav"><button class="btn sec" type="button" id="atras">Volver</button><button class="btn" type="button" id="sigue">'+(ultimo?'Entregar la ficha':'Pasar a '+ESTACIONES[k+1].nom.toLowerCase())+'</button></div>';
+  pantalla.innerHTML=h;
+  pantalla.querySelectorAll('.op').forEach(function(b){ b.onclick=function(){ marcar(b.getAttribute('data-q'), b.getAttribute('data-v')); }; });
+  pantalla.querySelectorAll('.pto').forEach(function(b){ b.onclick=function(){
+    var id=b.getAttribute('data-e'), j=+b.getAttribute('data-j'), n=+b.getAttribute('data-n');
+    var a=(estado.resp[id]||[]).slice(); a[j] = a[j]===n ? null : n; estado.resp[id]=a; guardarLocal();
+    pantalla.querySelectorAll('.pto[data-e="'+id+'"][data-j="'+j+'"]').forEach(function(x){ x.setAttribute('aria-pressed', +x.getAttribute('data-n')===a[j]); });
+    cuenta();
+  }; });
+  pantalla.querySelectorAll('textarea').forEach(function(t){ t.oninput=function(){ estado.resp[t.getAttribute('data-q')]=t.value; guardarLocal(); cuenta(); }; });
+  pantalla.querySelectorAll('[data-otra]').forEach(function(t){ t.oninput=function(){ estado.otra[t.getAttribute('data-otra')]=t.value; guardarLocal(); }; });
+  limites(c);
+  document.getElementById('atras').onclick=function(){ ir(k-1); };
+  document.getElementById('sigue').onclick=function(){
+    var falta=c.preguntas.filter(function(p){ return !lleno(estado.resp[p.id]); });
+    if(falta.length && !this.dataset.insiste){
+      this.dataset.insiste='1';
+      document.getElementById('aviso').textContent='Quedan '+falta.length+' sin responder en esta estación. Si prefieres dejarlas, aprieta el mismo botón otra vez.';
+      document.getElementById('q-'+falta[0].id).scrollIntoView({behavior:'smooth',block:'center'});
+      return;
+    }
+    if(ultimo) entregar(this); else ir(k+1);
+  };
+}
+
+function buscar(id){ var r; ESTACIONES.forEach(function(c){c.preguntas.forEach(function(p){ if(p.id===id) r=p; })}); return r; }
+function marcar(id,val){
+  var p=buscar(id);
+  if(p.tipo==='uno'){ estado.resp[id] = estado.resp[id]===val ? '' : val; }
+  else { var a=(estado.resp[id]||[]).slice(); var i=a.indexOf(val); if(i>-1) a.splice(i,1); else if(!p.max||a.length<p.max) a.push(val); estado.resp[id]=a; }
+  guardarLocal();
+  pantalla.querySelectorAll('.op[data-q="'+id+'"]').forEach(function(b){
+    var v=b.getAttribute('data-v'), s=estado.resp[id]; b.setAttribute('aria-pressed', Array.isArray(s) ? s.indexOf(v)>-1 : s===v);
+  });
+  var o=document.getElementById('o-'+id); if(o){ var s=estado.resp[id]; o.hidden = !(Array.isArray(s) ? s.indexOf('Otra')>-1 : s==='Otra'); }
+  limites(ESTACIONES[paso]); cuenta();
+}
+function limites(c){
+  c.preguntas.forEach(function(p){ if(p.tipo!=='varios'||!p.max) return; var a=estado.resp[p.id]||[];
+    pantalla.querySelectorAll('.op[data-q="'+p.id+'"]').forEach(function(b){ b.disabled = a.length>=p.max && b.getAttribute('aria-pressed')!=='true'; }); });
+}
+function cuenta(){ var t=document.getElementById('cuenta'); if(t) t.textContent=respondidas()+' de '+TOTAL+' respondidas'; }
+
+function ir(k){ paso=k; if(k<0) portada(); else if(k>=ESTACIONES.length) final(); else estacion(k); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function datos(){
+  var preguntas=[], respuestas=[];
+  ESTACIONES.forEach(function(c){ c.preguntas.forEach(function(p){
+    preguntas.push(numeroDe(p.id)+'. '+p.t);
+    var v=estado.resp[p.id]; var txt;
+    if(p.tipo==='escala'){ v=v||[]; txt=p.pares.map(function(par,j){ return v[j] ? par[0]+' '+v[j]+'/5 '+par[1] : ''; }).filter(Boolean).join(' · '); }
+    else txt = Array.isArray(v) ? v.join(' · ') : (v||'');
+    if(estado.otra[p.id] && /Otra/.test(txt)) txt = txt.replace('Otra','Otra: '+estado.otra[p.id]);
+    respuestas.push(txt);
+  }); });
+  return {nombre:estado.nombre, salon:estado.salon, preguntas:preguntas, respuestas:respuestas};
+}
+function textoPlano(d){
+  var l=['FICHA DE INGRESO AL SALÓN','Nombre: '+d.nombre,'Salón: '+(d.salon||'—'),''];
+  d.preguntas.forEach(function(q,i){ l.push(q); l.push('→ '+(d.respuestas[i]||'(sin respuesta)')); l.push(''); });
+  return l.join('\n');
+}
+
+var llego = false;
+// Buzón de respuestas: la app web de Apps Script «Ficha de ingreso al salón» (doPost → planilla).
+var BUZON = 'https://script.google.com/macros/s/AKfycbzYimBZDDiOdlb85kHiHkuBe8Z-t_3J0uywR_vqQXSyQvdSgID-idQzsD5-sLC6GmhoKg/exec';
+function entregar(btn){
+  btn.disabled=true; btn.textContent='Timbrando la ficha…';
+  var d=datos();
+  function listo(ok){ llego=ok; ir(ESTACIONES.length); }
+  if(window.google && google.script && google.script.run){
+    google.script.run.withSuccessHandler(function(){ listo(true); }).withFailureHandler(function(){ listo(false); }).guardar(d);
+    return;
+  }
+  if(/github\.io$/.test(location.hostname)){
+    fetch(BUZON, {method:'POST', mode:'no-cors', credentials:'omit', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(d)})
+      .then(function(){ listo(true); }, function(){ listo(false); });
+    return;
+  }
+  var cl = window.claude && window.claude.use ? window.claude.use('db') : Promise.resolve(null);
+  var u = window.claude && window.claude.use ? window.claude.use('user') : Promise.resolve(null);
+  Promise.all([cl,u]).then(function(r){
+    var db=r[0], user=r[1];
+    if(!db||!user) return listo(false);
+    return user.id().then(function(id){
+      return db.doc('respuestas/'+id).set({nombre:d.nombre, salon:d.salon, preguntas:d.preguntas, respuestas:d.respuestas, fecha:new Date().toISOString()});
+    }).then(function(){ listo(true); });
+  }).catch(function(){ listo(false); });
+}
+
+function final(){
+  var d=datos();
+  pantalla.innerHTML='<div class="final"><div class="timbre">'+HUELLA+'LISTO Y PERFUMADO</div>'+
+    '<h2>Gracias, '+esc(estado.nombre.split(' ')[0]||'')+'</h2>'+
+    '<p class="bajada" style="margin:10px auto 0">'+(llego
+      ? 'La ficha del salón llegó completa. Con ella se escriben su voz, su relato y su manifiesto.'
+      : 'La ficha quedó lista en esta pantalla. Copia tus respuestas y mándalas por WhatsApp o correo a quien te envió esta ficha.')+'</p>'+
+    '<div class="copia"'+(llego?' hidden':'')+'><label class="campo" for="copia">Tus respuestas</label><textarea id="copia" readonly>'+esc(textoPlano(d))+'</textarea>'+
+    '<div class="nav"><button class="btn sec" type="button" id="revisar">Revisar mis respuestas</button><button class="btn" type="button" id="copiar">Copiar respuestas</button></div>'+
+    '<p class="aviso" id="aviso"></p></div></div>';
+  document.getElementById('revisar').onclick=function(){ ir(0); };
+  document.getElementById('copiar').onclick=function(){
+    var t=document.getElementById('copia'), a=document.getElementById('aviso');
+    function sel(){ t.focus(); t.select(); a.textContent='Quedaron seleccionadas: cópialas con el menú o con Ctrl+C.'; }
+    try{ navigator.clipboard.writeText(t.value).then(function(){ a.textContent='Copiadas. Ahora pégalas en el mensaje.'; }, sel); }catch(e){ sel(); }
+  };
+}
+
+ir(-1);
+</script>
+
+</body>
+</html>
